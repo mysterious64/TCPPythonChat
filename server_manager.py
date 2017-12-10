@@ -1,20 +1,17 @@
 import _thread
-from server_request import Server_Request
+from server_client import Server_Client
 
 class Server_Manager:
 
 	def __init__(self, socket):
 		print('Server Initiated')
 		self.socket = socket
+		self.clients = []
 
 	def connect_new_client(self, socket, addr):
-		socket.send(b'AUTHENTICATE;')
-		while True:
-			data = socket.recv(1024).decode('ascii')
-			request = Server_Request(data)
-			response = request.handle()
-			socket.send(response.encode('ascii'))
-		socket.close()
+		client = Server_Client(socket, addr)
+		client.start()
+		self.clients.push(client)
 
 	def listen_for_connections(self):
 		while True:

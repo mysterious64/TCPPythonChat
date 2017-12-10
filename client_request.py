@@ -9,4 +9,5 @@ class Client_Request:
 		print('Handling Request Action: ', command, ' Parameters: ', parameters)
 		action = Client_Action(command, parameters)
 		response = action.handle() 
-		print('Response would be: ', response)
+		print('Response: ', response)
+		return response
