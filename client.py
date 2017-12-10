@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import socket
-from client_request import Client_Request
+from client_manager import Client_Manager
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 4713
@@ -11,9 +11,6 @@ socket_c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 socket_c.connect((TCP_IP, TCP_PORT))
 #text = input("Enter Username: ")
 #socket_c.send(text.encode('ascii'))
-while True:
-	data = socket_c.recv(BUFFER_SIZE)
-	request = Client_Request(data.decode('ascii'))
-	response = request.handle()
-	socket_c.send(response.encode('ascii'))
-socket_c.close()
+manager = Client_Manager(socket_c)
+manager.start()
+

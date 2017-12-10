@@ -2,9 +2,10 @@ from server_request import Server_Request
 
 class Server_Client:
 
-	def __init__(self, socket, addr):
+	def __init__(self, socket, addr, server):
 		self.socket = socket
 		self.addr = addr
+		self.server  = server
 		#user properties
 		self.logged_in = False
 		self.username = ''
@@ -19,5 +20,10 @@ class Server_Client:
 			data = self.socket.recv(1024).decode('ascii')
 			request = Server_Request(data, self)
 			response = request.handle()
+			if response == None:
+				continue
 			self.socket.send(response.encode('ascii'))
 		self.socket.close()
+
+	def broadcast(self, text):
+		self.server.broadcast(text)

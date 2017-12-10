@@ -6,7 +6,12 @@ class Server_Request:
 		self.client = client
 
 	def handle(self):
-		command, parameters = self.data.split(';', 1)
+		command = ' '
+		parameters = ' '
+		try:
+			command, parameters = self.data.split(';', 1)
+		except:
+			command = self.data
 		print('Handling Server Action: ',  command, ' Parameters: ', parameters)
 		action = Server_Action(command, parameters, self.client)
 		response = action.handle()

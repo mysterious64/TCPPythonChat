@@ -6,7 +6,8 @@ class Server_Action:
 		self.client = client
 		self.action_map = {
 			'AUTHENTICATE_USER': self.handle_authenticate_user,
-			'AUTHENTICATE_PASS': self.handle_authenticate_pass
+			'AUTHENTICATE_PASS': self.handle_authenticate_pass,
+			'BROADCAST': self.handle_broadcast
 		}
 
 	def handle(self):
@@ -27,8 +28,12 @@ class Server_Action:
 		if self.client.username in self.client.people_map:
 			password = self.client.people_map[self.client.username]
 			if self.data == password:
+				self.client.logged_in = True
 				return 'USER_AUTHENTICATED;'
 			else:
 				return 'AUTHENTICATE_USER_PASS;'
 		else:
 			return 'AUTHENTICATE_USER_PASS;'
+
+	def handle_broadcast(self):
+		self.client.broadcast('BROADCAST;' +self.data)
