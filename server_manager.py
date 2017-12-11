@@ -17,7 +17,6 @@ class Server_Manager:
 		while True:
 			conn, addr = self.socket.accept()
 			_thread.start_new_thread(self.connect_new_client, (conn, addr))
-		socket.shutdown(SHUT_RWDR)
 		socket.close()
 
 	def broadcast(self, text, channel, name):
@@ -34,15 +33,20 @@ class Server_Manager:
 
 	def message(self, text, sender, reciever):
 		print('Messaging ' , text)
-		print('Clients ', self.clients)
-		action, message = text.split(';',1)
+		print('Checking for ' + reciever)
+		found = 0
 		for client in self.clients:
 			print('checking ', client.username)
 			if client.logged_in:
 				if client.username in reciever:
 					print('Messaging to ', client.username)
-					response = action + ';' + sender + ' -> ' + client.username + ' ' + message
+					response = 'MESSAGE_R;' + sender + ' -> ' + client.username + ' ' + text
+					found = 1
 					client.socket.send(response.encode('ascii'))
+					return response
+		if not found:
+			response = 'NO_PERSON;'
+			return response
 
 
 	def list(self):

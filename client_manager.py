@@ -1,12 +1,14 @@
 from client_request import Client_Request
 import _thread
 import threading
+import select
 
 class Client_Manager:
 
 	def __init__(self, socket):
 		self.socket = socket
 		self.connected = False
+		self.exit = False
 
 	def start(self):
 		self.listen_for_user_authentication()
@@ -33,7 +35,13 @@ class Client_Manager:
 	def listen_for_server_messages(self):
 		print('Listening')
 		while True:
+			if exit:
+				print('Disconnecting from server')
+				return
 			data = self.socket.recv(1024)
+			if not data:
+				print('Disconnected')
+				return
 			print('New Data ', data)
 			request = Client_Request(data.decode('ascii'), self)
 			response = request.handle()
@@ -41,8 +49,8 @@ class Client_Manager:
 				continue
 			elif response == None:
 				continue
-			elif response == 'CLIENT_CLOSE':
-				break
+			if response == 'CLIENT_CLOSE':
+				continue
 			self.socket.send(response.encode('ascii'))
 		self.socket.close()
 
@@ -51,6 +59,7 @@ class Client_Manager:
 		while True:
 			request = Client_Request('NEW_ACTION;', self)
 			response = request.handle()
-			self.socket.send(response.encode('ascii'))
-			if response == 'CLIENT_EXIT;':
+			if response == 'DISCONNECT;':
+				exit = True
 				break
+			self.socket.send(response.encode('ascii'))

@@ -14,7 +14,9 @@ class Client_Action:
 			'BAD_REQUEST' : self.handle_bad_request ,
 			'BROADCAST' : self.handle_broadcast,
 			'CLIENT_CLOSE' : self.handle_user_close ,
+			'DISCONNECT' : self.handle_user_close ,
 			'LIST' : self.handle_list ,
+			'MESSAGE_R' : self.handle_message ,
 			'NEW_ACTION' : self.handle_input ,
 			'NOCHANNEL' : self.handle_no_channel,
 			'USER_AUTHENTICATED' : self.handle_authenticated,
@@ -90,6 +92,9 @@ class Client_Action:
 
 	def handle_online(self):
 		print('Online Users:')
+		print(self.data)
+
+	def handle_message(self):
 		print(self.data)
 
 	#User Handlers

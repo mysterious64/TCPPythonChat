@@ -1,4 +1,5 @@
 from server_request import Server_Request
+import select
 
 class Server_Client:
 
@@ -21,13 +22,10 @@ class Server_Client:
 			data = self.socket.recv(1024).decode('ascii')
 			request = Server_Request(data, self)
 			response = request.handle()
-			if response == None:
-				continue
 			if response == 'CLIENT_CLOSE;':
 				self.socket.send(response.encode('acsii'))
 				break
 			self.socket.send(response.encode('ascii'))
-		self.socket.shutdown(SHUT_RWDR)
 		self.socket.close()
 
 	def broadcast(self, text):
@@ -40,10 +38,11 @@ class Server_Client:
 	def msg(self, text):
 		try:
 			name, message = text.split(' ', 1)
-			self.server.message(message, self.username, name)
 		except:
-			response = 'NOPERSON;'
-			return self.socket.send(response.encode('ascii'))
+			name = text
+			message = ' '
+		response = self.server.message(message, self.username, name)
+		return self.socket.send(response.encode('ascii'))
 
 	def join(self, text):
 		self.channel = text
@@ -56,6 +55,7 @@ class Server_Client:
 
 	def disconnect(self, text):
 		self.logged_in == False
+		self.exit == True
 		response = 'CLIENT_CLOSE;'
 		return response
 
