@@ -14,15 +14,20 @@ class Client_Action:
 			'BAD_REQUEST' : self.handle_bad_request ,
 			'BROADCAST' : self.handle_broadcast,
 			'CLIENT_CLOSE' : self.handle_user_close ,
+			'LIST' : self.handle_list ,
 			'NEW_ACTION' : self.handle_input ,
-			'USER_AUTHENTICATED' : self.handle_authenticated
+			'NOCHANNEL' : self.handle_no_channel,
+			'USER_AUTHENTICATED' : self.handle_authenticated,
+			'USER_LIST' : self.handle_online
         	}
 		self.user_action_map = {
+			'CHANNEL' : self.handle_user_channel,
 			'HELP' : self.handle_user_help ,
 			'JOIN' : self.handle_user_join ,
-			'USERS' : self.handle_user_list ,
-			'CHANNEL' : self.handle_user_channel,
-			'MSG' : self.handle_user_msg
+			'LEAVE' : self.handle_user_disconnect ,
+			'LIST' : self.handle_user_list ,
+			'MSG' : self.handle_user_msg ,
+			'USERS' : self.handle_user_online
 		}
 
 	def handle(self):
@@ -72,6 +77,21 @@ class Client_Action:
 
 	def handle_broadcast(self):
 		print(self.data)
+
+	def handle_no_channel(self):
+		print('Not in any channel. Please join or create a channel before sending any messages')
+
+	def handle_list(self):
+		if self.data:
+			print('Channel List:')
+			print(self.data)
+		else:
+			print('No open channels')
+
+	def handle_online(self):
+		print('Online Users:')
+		print(self.data)
+
 	#User Handlers
 
 	def handle_user_input(self, input):
@@ -95,14 +115,20 @@ class Client_Action:
 		return self.handle_input()
 
 	def handle_user_join(self, text):
-		return
+		text = text.upper()
+		return 'JOIN;' +text
 
 	def handle_user_list(self, text):
-		return
+		return 'LIST;' +text
 
 	def handle_user_channel(self, text):
-		return
+		return 'BROADCAST;' +text
 
 	def handle_user_msg(self, text):
-		return 'BROADCAST;'+text
+		return 'MESSAGE;' +text
 
+	def handle_user_disconnect(self, text):
+		return 'DISCONNECT;'
+
+	def handle_user_online(self, text):
+		return 'USER_LIST;'

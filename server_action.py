@@ -7,7 +7,12 @@ class Server_Action:
 		self.action_map = {
 			'AUTHENTICATE_USER': self.handle_authenticate_user,
 			'AUTHENTICATE_PASS': self.handle_authenticate_pass,
-			'BROADCAST': self.handle_broadcast
+			'BROADCAST': self.handle_broadcast,
+			'DISCONNECT' : self.handle_disconnect,
+			'JOIN' : self.handle_channel,
+			'LIST' : self.handle_list,
+			'MESSAGE' : self.handle_msg,
+			'USER_LIST' : self.handle_online
 		}
 
 	def handle(self):
@@ -37,3 +42,18 @@ class Server_Action:
 
 	def handle_broadcast(self):
 		self.client.broadcast('BROADCAST;' +self.data)
+
+	def handle_disconnect(self):
+		self.client.disconnect('DISCONNECT;')
+
+	def handle_channel(self):
+		self.client.join(self.data)
+
+	def handle_list(self):
+		self.client.list(self.data)
+
+	def handle_msg(self):
+		self.client.msg(self.data)
+
+	def handle_online(self):
+		self.client.online(self.data)
